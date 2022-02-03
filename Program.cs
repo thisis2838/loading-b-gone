@@ -44,13 +44,13 @@ namespace loading_b_gone
         {
             again:
             Clear();
-            WriteLine($"Source Loading-B-Gone\nv.{Version}\nby 2838 - 2022-02-02\n\n\n");
+            WriteLine($"\n\n\nLoading-B-Gone\nv.{Version}\nby 2838 - 2022-02-03\n\nPlease report any bugs to https://github.com/thisis2838/loading-b-gone/issues\n\n");
             try
             {
                 string ffmpegPath = "";
                 if (!(File.Exists("ffmpeg_path.txt") && File.Exists(Path.Combine(ffmpegPath = File.ReadAllText("ffmpeg_path.txt"), "ffmpeg.exe"))))
                 {
-                    ffmpegPath = Prompt("FFmpeg and FFprobe folder path? (enter download to open a download link)");
+                    ffmpegPath = Prompt("FFmpeg folder path? (enter download to open a download link)");
 
                     if (ffmpegPath == "download")
                     {
@@ -77,8 +77,9 @@ namespace loading_b_gone
                 if (!File.Exists(timestamps))
                     throw new Exception("Timestamp file not found!");
 
-                double fps = -1;
+                WriteLine("\n");
 
+                double rate = -1;
                 if (File.Exists(Path.Combine(ffmpegPath, "ffprobe.exe")))
                 {
                     string[] fpsRatio = StartAndGetOutput(
@@ -86,30 +87,27 @@ namespace loading_b_gone
                         $"-v 0 -of csv=p=0 -select_streams v:0 -show_entries stream=r_frame_rate \"{file}\"").Split('/');
                     if (fpsRatio.Length == 2 && fpsRatio.All(x => x != "0"))
                     {
-                        fps = double.Parse(fpsRatio[1]) / double.Parse(fpsRatio[0]);
-                        WriteLine($"Video fps is {fpsRatio[0]}/{fpsRatio[1].Trim('\r', '\n')}fps => rate={fps}");
+                        rate = double.Parse(fpsRatio[1]) / double.Parse(fpsRatio[0]);
+                        WriteLine($"Video fps is {fpsRatio[0]}/{fpsRatio[1].Trim('\r', '\n')}fps => rate = {rate}\n");
                     }
                 }
 
-                double videoStart = 0, rtaStart = 0;
-                double loadBeginOffset = 0, loadEndOffset = 0;
-
-                double getMatchedTime(string name, string input, double old)
+                double getMatchedTime(string input, double old)
                 {
-                    Match match = Regex.Match(input, $@"(?:{name}=)([\-0-9:\.]+)");
-                    Match match2 = Regex.Match(input, $@"(?:{name}=)([\-0-9:\.]+)(?:f{{1}})");
+                    Match match = Regex.Match(input, $@"([\-0-9:\.]+)");
+                    Match match2 = Regex.Match(input, $@"([\-0-9:\.]+)(?:f{{1}})");
                     double output = old;
 
                     if (match2.Success)
                     {
-                        if (fps == -1)
+                        if (rate == -1)
                         {
-                            fps = 1 / double.Parse(Prompt(
+                            rate = 1 / double.Parse(Prompt(
                                 "Frame values detected in config, however the video's framerate " +
-                                "couldn't be determined due to ffprobe.exe not being found or something wrong happened utilizing such. " +
+                                "couldn't be determined due to ffprobe.exe not being found or something wrong happened during processing. " +
                                 "\nAs such please enter the video's FPS here:"));
                         }
-                        output = fps * double.Parse(match2.Groups[1].Value);
+                        output = rate * double.Parse(match2.Groups[1].Value);
                     }
                     else if (match.Success)
                     {
@@ -124,23 +122,22 @@ namespace loading_b_gone
                     return output;
                 }
 
+                WriteLine("Please enter settings for cutting, enter nothing for \"0\"");
+                double videoStart = getMatchedTime(Prompt("Exact time in the video when the run starts"), 0);
+                double rtaStart = getMatchedTime(Prompt("Livesplit's RTA Time when run started"), 0);
+                double loadBeginOffset = getMatchedTime(Prompt("Time to add onto load's start time"), 0);
+                double loadEndOffset = getMatchedTime(Prompt("Time to add onto load's end time"), 0);
+
                 List<(double, double)> tS = new List<(double, double)>();
                 var lines = File.ReadAllLines(timestamps).Where(x => !string.IsNullOrWhiteSpace(x));
                 foreach (string x in lines)
                 {
                     string[] members = x.Split(',');
-
-                    if (members.Count() != 2)
+                    try
                     {
-                        videoStart = getMatchedTime("run_start_video_timestamp", x, videoStart);
-                        rtaStart = getMatchedTime("timer_rta_started_at", x, rtaStart);
-                        loadBeginOffset = getMatchedTime("load_begin_offset", x, loadBeginOffset);
-                        loadEndOffset = getMatchedTime("load_end_offset", x, loadEndOffset);
-
-                        continue;
+                        tS.Add((TimeSpan.Parse(members[0]).TotalSeconds, TimeSpan.Parse(members[1]).TotalSeconds));
                     }
-
-                    tS.Add((TimeSpan.Parse(members[0]).TotalSeconds, TimeSpan.Parse(members[1]).TotalSeconds));
+                    catch { continue; }
                 }
 
                 Console.WriteLine($@"
@@ -152,7 +149,8 @@ Load start offset = {loadBeginOffset}s
 Load end offset   = {loadEndOffset}s
 
 [1] to do a full cut
-[2] to do a preview of 10 loads taken out (a second before and after each will be shown)
+[2] to do a preview of a few loads taken out (a second before and after each will be shown)
+
 ");
                 string proceed = Console.ReadLine();
                 WriteLine();
@@ -167,7 +165,7 @@ Load end offset   = {loadEndOffset}s
 
                 const int previews = 10;
 
-                if (!shortCut && tS.Count > previews + 3)
+                if (!(shortCut && tS.Count > previews + 3))
                 {
                     for (int i = 0; i <= tS.Count; i++)
                     {
@@ -197,38 +195,36 @@ Load end offset   = {loadEndOffset}s
                 {
                     for (int i = 2; n <= previews * 2 + 1 && i < tS.Count - 2; i++)
                     {
-                        int actualIndex = i >> 1;
-
-                        if (tS[actualIndex + 1].Item1 - tS[actualIndex].Item2 < 3 ||
-                            tS[actualIndex].Item1 - tS[actualIndex - 1].Item2 < 3)
+                        if (tS[i + 1].Item1 - tS[i].Item2 < 3 || tS[i].Item1 - tS[i - 1].Item2 < 3)
                         {
-                            WriteLine($"Load {actualIndex} has less than 3 seconds on either side!");
+                            WriteLine($"Load {i} has less than 3 seconds on either side!");
                             continue;
                         }
 
-                        string str = i % 2 != 0 ?
-                            ($"start={tS[actualIndex].Item2}:end={tS[actualIndex].Item2 + 1}") :
-                            ($"start={tS[actualIndex].Item1 - 1}:end={tS[actualIndex].Item1}");
-                        sb.AppendLine($"[0:v]trim={str},setpts=PTS-STARTPTS[{n}v];[0:a]atrim={str},asetpts=PTS-STARTPTS[{n}a];");
+                        string str1 = $"start={tS[i].Item1 - 1}:end={tS[i].Item1}";
+                        string str2 = $"start={tS[i].Item2}:end={tS[i].Item2 + 1}";
+
+                        sb.AppendLine($"[0:v]trim={str1},setpts=PTS-STARTPTS[{n}v];[0:a]atrim={str1},asetpts=PTS-STARTPTS[{n}a];");
+                        n++;
+                        sb.AppendLine($"[0:v]trim={str2},setpts=PTS-STARTPTS[{n}v];[0:a]atrim={str2},asetpts=PTS-STARTPTS[{n}a];");
                         n++;
                     }
                 }
 
                 if (n == 0)
                     throw new Exception("no usuable segments");
-
                 for (int i = 0; i <= n - 1; i++)
                     sb.Append($"[{i}v][{i}a]");
                 sb.AppendLine($"concat=n={n}:v=1:a=1[outv][outa]");
 
                 WriteLine("\nScript:\n" + sb.ToString());
-
                 File.WriteAllText("params.txt", sb.ToString().Replace(Environment.NewLine, ""));
                 string fileName = Path.GetFileName(file);
                 string launchParams =
                     $" -i \"{file}\" -filter_complex_script \"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "params.txt")}\" -map \"[outv]\" -map \"[outa]\"" +
                     $" \"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName)}\"";
-                var proc = Process.Start(@"D:\Programs\ffmpeg\ffmpeg.exe", launchParams);
+                WriteLine($"Launch params:\n{launchParams}\n\n");
+                var proc = Process.Start(Path.Combine(ffmpegPath, "ffmpeg.exe"), launchParams);
                 proc.WaitForExit();
 
                 WriteLine($"Outputted to {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName)}");
