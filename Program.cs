@@ -28,7 +28,7 @@ namespace loading_b_gone_ui
                     try
                     {
                         Version ver = Version.Parse(wb.DownloadString(@"https://raw.githubusercontent.com/thisis2838/loading-b-gone/main/current-version.txt"));
-                        if (true)
+                        if (ver > Version)
                         {
                             if (MessageBox.Show(
                                 $"There is a new version released! ({ver} > {Version})\r\n" +
