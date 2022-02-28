@@ -100,7 +100,6 @@ namespace loading_b_gone_ui
 
         public override void Write(string message)
         {
-
             Action append = delegate () 
             {
                 output.AppendText($"[{DateTime.Now}] {message}");

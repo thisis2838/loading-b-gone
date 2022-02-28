@@ -208,7 +208,7 @@ init
                 "timestamps on " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + ".txt" : 
                 "timestamps.txt");
         File.WriteAllText(vars.CurFileName, 
-        "run_start_video_timestamp=\ntimer_rta_started_at=\nload_begin_offset=\nload_end_offset=\n\n", 
+        "", 
         Encoding.UTF8);
     };
 
@@ -218,7 +218,6 @@ init
         stream.WriteLine(input);
         stream.Close();
     };
-
 
     vars.FileWriteLine = fileWriteLine;
     vars.FileRefresh = fileRefresh;
@@ -236,22 +235,23 @@ init
         return vars.TimerModel.CurrentState.CurrentTime.RealTime;
     };
 
-    Action loadBegan = () =>
+    Action<TimeSpan> loadBegan = (time) =>
     {
-        vars.LastStartLoadTime = getCurTime();
-        print("Load began @ " + vars.LastStartLoadTime + ", frame count = " + vars.FrameCount.Current);
+        vars.LastStartLoadTime = time;
+        print(vars.GetCurTime() + ": Load began @ " + vars.LastStartLoadTime + ", frame count = " + vars.FrameCount.Current);
     };
 
     Action<TimeSpan> loadEnded = (time) =>
     {
         vars.FileWriteLine(vars.LastStartLoadTime.ToString() + "," + time.ToString());
-        print("Load ended @ " + time + ", frame count = " + vars.FrameCount.Current);
+        print(vars.GetCurTime() + ": Load ended @ " + time + ", frame count = " + vars.FrameCount.Current);
         vars.LastStartLoadTime = TimeSpan.MinValue;
     };
 
     vars.LoadEnded = loadEnded;
     vars.LoadBegan = loadBegan;
     vars.GetCurTime = getCurTime;
+	vars.LastCurTime = TimeSpan.MinValue;
 #endregion
 
     
@@ -271,9 +271,8 @@ update
     if (vars.LoadingPlaqueActive.Current == true && vars.LoadingPlaqueActive.Old == false)
     {
 		if (vars.LastStartLoadTime == TimeSpan.MinValue)
-			vars.LoadBegan();
+			vars.LoadBegan(vars.LastCurTime);
     }
-
 	
 	bool doneLoads = 
 	(vars.LoadingPlaqueActive.Current == false && vars.FrameCount.Current >= 2);
@@ -282,10 +281,13 @@ update
     {
 		vars.LoadEnded(vars.GetCurTime());
     }
+	
+	vars.LastCurTime = vars.GetCurTime();
 }
 
 onStart
 {
     vars.LastStartLoadTime = TimeSpan.MinValue;
+	vars.LastCurTime = vars.GetCurTime();
     vars.FileRefresh();
 }

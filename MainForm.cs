@@ -50,6 +50,7 @@ namespace loading_b_gone_ui
                 gActions.Enabled = gStartOffsets.Enabled = gLoadOffsets.Enabled = value;
             }
         }
+        private bool _warnVideoStartZero = false;
 
         public MainForm()
         {
@@ -156,12 +157,21 @@ namespace loading_b_gone_ui
                 Trace.WriteLine($"Couldn't figure out FPS! Defaulting to {FPS}");
             }
 
-            _tsFile = new TimeStampFile(boxTimestampPath.Text);
-            Trace.WriteLine($"Loaded {_tsFile.TimeStamps.Count()} timestamps");
+            _tsFile = new TimeStampFile();
+            if (_tsFile.Parse(boxTimestampPath.Text))
+                Trace.WriteLine($"Loaded {_tsFile.TimeStamps.Count()} timestamps");
+            else
+            {
+                MessageBox.Show("Invalid Timestamp file!", "Error");
+                ReadyForProcessing = false;
+            }
+
+            _warnVideoStartZero = true;
         }
 
         private void ExecuteTrim(string script, string outputFile)
         {
+
             File.WriteAllText("params.txt", script);
             string launchParams =
                 $" -i \"{boxVideoPath.Text}\" -f lavfi -i anullsrc -f lavfi -i \"color=c=black:s={_videoInfo.Resolution}:r={_videoInfo.FPS}\" " +
@@ -175,23 +185,29 @@ namespace loading_b_gone_ui
                 $"&\"{boxFFmpegPath.Text}\" " +
                 $"{launchParams}" +
                 $"& PAUSE");
-
             //Process.Start(boxFFmpegPath.Text, launchParams);
         }
 
         private void butDoFull_Click(object sender, EventArgs e)
         {
-            string filePath = SaveFileDialog("", string.IsNullOrWhiteSpace(_lastFileDiagDir[2]) ? _lastFileDiagDir[0] : _lastFileDiagDir[2]);
+            if (GetMatchedTime(boxVideoStart.Text, FPS).Item1 == 0 && _warnVideoStartZero)
+            {
+                _warnVideoStartZero = false;
+                toolTip1.Show("Are you sure this is 0?", boxVideoStart);
+                return;
+            }
 
+            string filePath = SaveFileDialog("", string.IsNullOrWhiteSpace(_lastFileDiagDir[2]) ? _lastFileDiagDir[0] : _lastFileDiagDir[2]);
+            
             if (string.IsNullOrWhiteSpace(filePath))
                 return;
-
+            
             _lastFileDiagDir[2] = filePath;
 
             string script = _tsFile.MakeTrimScript(
                 GetMatchedTime(boxVideoStart.Text, FPS).Item1,
                 GetMatchedTime(boxRTAStart.Text, FPS).Item1,
-                GetMatchedTime(boxStartOffset.Text, FPS).Item1,
+                -GetMatchedTime(boxStartOffset.Text, FPS).Item1,
                 GetMatchedTime(boxEndOffset.Text, FPS).Item1);
 
             ExecuteTrim(script, filePath);
@@ -199,17 +215,24 @@ namespace loading_b_gone_ui
 
         private void butDoPreview_Click(object sender, EventArgs e)
         {
-            string filePath = SaveFileDialog("", string.IsNullOrWhiteSpace(_lastFileDiagDir[3]) ? _lastFileDiagDir[0] : _lastFileDiagDir[3]);
+            if (GetMatchedTime(boxVideoStart.Text, FPS).Item1 == 0 && _warnVideoStartZero)
+            {
+                _warnVideoStartZero = false;
+                toolTip1.Show("Are you sure this is 0?", boxVideoStart);
+                return;
+            }
+
+            string filePath = SaveFileDialog("", string.IsNullOrWhiteSpace(_lastFileDiagDir[2]) ? _lastFileDiagDir[0] : _lastFileDiagDir[2]);
 
             if (string.IsNullOrWhiteSpace(filePath))
                 return;
 
-            _lastFileDiagDir[3] = filePath;
+            _lastFileDiagDir[2] = filePath;
 
             string script = _tsFile.MakePreviewScript(
                 GetMatchedTime(boxVideoStart.Text, FPS).Item1,
                 GetMatchedTime(boxRTAStart.Text, FPS).Item1,
-                GetMatchedTime(boxStartOffset.Text, FPS).Item1,
+                -GetMatchedTime(boxStartOffset.Text, FPS).Item1,
                 GetMatchedTime(boxEndOffset.Text, FPS).Item1,
                 (int)nudNumPreviews.Value);
 

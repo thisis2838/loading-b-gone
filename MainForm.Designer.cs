@@ -91,12 +91,13 @@ namespace loading_b_gone_ui
             this.label18 = new System.Windows.Forms.Label();
             this.labVersion = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.butReportBug = new System.Windows.Forms.Button();
+            this.label19 = new System.Windows.Forms.Label();
             this.boxMessages = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.butHelp = new System.Windows.Forms.Button();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.label19 = new System.Windows.Forms.Label();
-            this.butReportBug = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.gActions.SuspendLayout();
@@ -121,6 +122,7 @@ namespace loading_b_gone_ui
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -210,7 +212,7 @@ namespace loading_b_gone_ui
             this.gLoadOffsets.Size = new System.Drawing.Size(445, 75);
             this.gLoadOffsets.TabIndex = 3;
             this.gLoadOffsets.TabStop = false;
-            this.gLoadOffsets.Text = "Load Offsets";
+            this.gLoadOffsets.Text = "Trim Offsets";
             // 
             // tableLayoutPanel3
             // 
@@ -239,11 +241,9 @@ namespace loading_b_gone_ui
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(3, 7);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(150, 13);
+            this.label5.Size = new System.Drawing.Size(161, 13);
             this.label5.TabIndex = 0;
-            this.label5.Text = "Time to add to loads\' start time";
-            this.toolTip1.SetToolTip(this.label5, "Amount of time to add onto the starting time of a load;\r\nor in other words, how m" +
-        "uch before or after a load\'s start does a trim begin");
+            this.label5.Text = "Trim this much before loads\' start";
             // 
             // label6
             // 
@@ -251,11 +251,9 @@ namespace loading_b_gone_ui
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(3, 35);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(148, 13);
+            this.label6.Size = new System.Drawing.Size(159, 13);
             this.label6.TabIndex = 1;
-            this.label6.Text = "Time to add to loads\' end time";
-            this.toolTip1.SetToolTip(this.label6, "Amount of time to add onto the ending time of a load;\r\nor in other words, how muc" +
-        "h before or after a load\'s end does a trim end\r\n");
+            this.label6.Text = "Trim this much ahead loads\' end";
             // 
             // boxStartOffset
             // 
@@ -307,7 +305,7 @@ namespace loading_b_gone_ui
             this.gStartOffsets.Size = new System.Drawing.Size(445, 75);
             this.gStartOffsets.TabIndex = 2;
             this.gStartOffsets.TabStop = false;
-            this.gStartOffsets.Text = "Run start Offsets";
+            this.gStartOffsets.Text = "Video Offsets";
             // 
             // tableLayoutPanel2
             // 
@@ -336,10 +334,9 @@ namespace loading_b_gone_ui
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(3, 7);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(140, 13);
+            this.label3.Size = new System.Drawing.Size(120, 13);
             this.label3.TabIndex = 0;
-            this.label3.Text = "Runs begins in the Video at:";
-            this.toolTip1.SetToolTip(this.label3, "The exact time in the video recording when Livesplit started and the run began.");
+            this.label3.Text = "At this time in the Video:";
             // 
             // label4
             // 
@@ -347,11 +344,9 @@ namespace loading_b_gone_ui
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(3, 35);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(178, 13);
+            this.label4.Size = new System.Drawing.Size(124, 13);
             this.label4.TabIndex = 1;
-            this.label4.Text = "Livesplit\'s Real Time timer started at:";
-            this.toolTip1.SetToolTip(this.label4, "Livesplit\'s RTA time when the run began; or the earliest RTA time visible in the " +
-        "recording.");
+            this.label4.Text = "Livesplit\'s RTA time was:";
             // 
             // boxVideoStart
             // 
@@ -360,7 +355,6 @@ namespace loading_b_gone_ui
             this.boxVideoStart.Name = "boxVideoStart";
             this.boxVideoStart.Size = new System.Drawing.Size(103, 20);
             this.boxVideoStart.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.boxVideoStart, "The exact time in the video recording when Livesplit started and the run began.");
             this.boxVideoStart.TextChanged += new System.EventHandler(this.boxVideoStart_TextChanged);
             // 
             // boxRTAStart
@@ -370,8 +364,6 @@ namespace loading_b_gone_ui
             this.boxRTAStart.Name = "boxRTAStart";
             this.boxRTAStart.Size = new System.Drawing.Size(103, 20);
             this.boxRTAStart.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.boxRTAStart, "Livesplit\'s RTA time when the run began; or the earliest RTA time visible in the " +
-        "recording.");
             this.boxRTAStart.TextChanged += new System.EventHandler(this.boxRTAStart_TextChanged);
             // 
             // labEquVideoStart
@@ -750,9 +742,9 @@ namespace loading_b_gone_ui
             this.tableLayoutPanel8.RowCount = 5;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 34F));
             this.tableLayoutPanel8.Size = new System.Drawing.Size(453, 301);
             this.tableLayoutPanel8.TabIndex = 3;
             // 
@@ -784,35 +776,35 @@ namespace loading_b_gone_ui
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(56, 26);
             this.label14.TabIndex = 4;
-            this.label14.Text = "Creator, Maintainer";
+            this.label14.Text = "Creator\r\nMaintainer";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label12
             // 
             this.label12.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(32, 123);
+            this.label12.Location = new System.Drawing.Point(27, 128);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(37, 13);
+            this.label12.Size = new System.Drawing.Size(42, 13);
             this.label12.TabIndex = 2;
-            this.label12.Text = "Tester";
+            this.label12.Text = "Testers";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label15
             // 
             this.label15.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(75, 123);
+            this.label15.Location = new System.Drawing.Point(75, 115);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(101, 13);
+            this.label15.Size = new System.Drawing.Size(101, 39);
             this.label15.TabIndex = 5;
-            this.label15.Text = "TreeWonTwoToFor";
+            this.label15.Text = "TreeWonTwoToFor\r\nthe_kovic\r\nLyren";
             // 
             // label16
             // 
             this.label16.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(26, 157);
+            this.label16.Location = new System.Drawing.Point(26, 167);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(43, 26);
             this.label16.TabIndex = 6;
@@ -823,7 +815,7 @@ namespace loading_b_gone_ui
             // 
             this.label17.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(75, 163);
+            this.label17.Location = new System.Drawing.Point(75, 173);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(194, 13);
             this.label17.TabIndex = 7;
@@ -869,45 +861,15 @@ namespace loading_b_gone_ui
             this.label11.TabIndex = 1;
             this.label11.Text = "Loading-B-Gone";
             // 
-            // boxMessages
-            // 
-            this.boxMessages.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
-            this.boxMessages.Location = new System.Drawing.Point(12, 351);
-            this.boxMessages.Multiline = true;
-            this.boxMessages.Name = "boxMessages";
-            this.boxMessages.ReadOnly = true;
-            this.boxMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.boxMessages.Size = new System.Drawing.Size(463, 87);
-            this.boxMessages.TabIndex = 1;
-            // 
-            // butHelp
-            // 
-            this.butHelp.Location = new System.Drawing.Point(434, 5);
-            this.butHelp.Name = "butHelp";
-            this.butHelp.Size = new System.Drawing.Size(45, 23);
-            this.butHelp.TabIndex = 1;
-            this.butHelp.Text = "Help";
-            this.butHelp.UseVisualStyleBackColor = true;
-            this.butHelp.Click += new System.EventHandler(this.butHelp_Click);
-            // 
             // panel2
             // 
             this.panel2.Controls.Add(this.butReportBug);
             this.panel2.Controls.Add(this.label19);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(75, 193);
+            this.panel2.Location = new System.Drawing.Point(75, 203);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(375, 105);
+            this.panel2.Size = new System.Drawing.Size(375, 95);
             this.panel2.TabIndex = 9;
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(-1, 8);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(157, 13);
-            this.label19.TabIndex = 0;
-            this.label19.Text = "Found a bug? Don\'t be afraid to";
             // 
             // butReportBug
             // 
@@ -919,13 +881,58 @@ namespace loading_b_gone_ui
             this.butReportBug.UseVisualStyleBackColor = true;
             this.butReportBug.Click += new System.EventHandler(this.butReportBug_Click);
             // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(-1, 8);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(157, 13);
+            this.label19.TabIndex = 0;
+            this.label19.Text = "Found a bug? Don\'t be afraid to";
+            // 
+            // boxMessages
+            // 
+            this.boxMessages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.boxMessages.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
+            this.boxMessages.Location = new System.Drawing.Point(3, 16);
+            this.boxMessages.Multiline = true;
+            this.boxMessages.Name = "boxMessages";
+            this.boxMessages.ReadOnly = true;
+            this.boxMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.boxMessages.Size = new System.Drawing.Size(457, 81);
+            this.boxMessages.TabIndex = 1;
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.IsBalloon = true;
+            // 
+            // butHelp
+            // 
+            this.butHelp.Location = new System.Drawing.Point(433, 5);
+            this.butHelp.Name = "butHelp";
+            this.butHelp.Size = new System.Drawing.Size(45, 23);
+            this.butHelp.TabIndex = 1;
+            this.butHelp.Text = "Help";
+            this.butHelp.UseVisualStyleBackColor = true;
+            this.butHelp.Click += new System.EventHandler(this.butHelp_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.boxMessages);
+            this.groupBox3.Location = new System.Drawing.Point(12, 351);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(463, 100);
+            this.groupBox3.TabIndex = 2;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Messages, Warning and Errors";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(491, 450);
+            this.ClientSize = new System.Drawing.Size(491, 464);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.butHelp);
-            this.Controls.Add(this.boxMessages);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -965,8 +972,9 @@ namespace loading_b_gone_ui
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -1038,6 +1046,7 @@ namespace loading_b_gone_ui
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button butReportBug;
         private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.GroupBox groupBox3;
     }
 }
 

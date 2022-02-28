@@ -12,7 +12,7 @@ namespace loading_b_gone_ui
 {
     static class Program
     {
-        public static Version Version = new Version("1.0");
+        public static Version Version = new Version("1.1");
 
         /// <summary>
         /// The main entry point for the application.
